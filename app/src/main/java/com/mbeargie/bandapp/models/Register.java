@@ -9,15 +9,17 @@ public class Register {
 
     public String bandname;
     public String city;
+    public int photo_orientation;
 
 
     public Register() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Register(String bandname, String bandcity) {
+    public Register(String bandname, String bandcity, int photo_orientation) {
         this.bandname = bandname;
         this.city = city;
+        this.photo_orientation = photo_orientation;
 
     }
 

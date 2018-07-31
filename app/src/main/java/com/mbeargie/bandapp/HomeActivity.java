@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +34,7 @@ import com.mbeargie.bandapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Map;
 
 
@@ -57,6 +60,8 @@ public class HomeActivity extends BaseActivity implements
     FirebaseStorage storage;
     StorageReference storageReference;
     StorageReference storageReferencePhoto;
+    ExifInterface exif;
+
 
     public String mDownloadUrl;
     Uri uri;
@@ -94,21 +99,7 @@ public class HomeActivity extends BaseActivity implements
 
         ImageView ivBasicImage = (ImageView) findViewById(R.id.facebook_photo);
 
-        if(user.getPhotoUrl() != null) {
-            Picasso.with(this).load(user.getPhotoUrl() + "/picture?height=500").into(ivBasicImage);
-        } else {
-            storageReferencePhoto.child("images/" + user.getUid() + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.with(context).load(uri).into(ivBasicImage);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                }
-            });
-        }
+
 
         // Attach a listener to read the data at your profile reference
         mDatabase.child("users").child(user.getUid()).addValueEventListener(new ValueEventListener() {
@@ -120,6 +111,27 @@ public class HomeActivity extends BaseActivity implements
                 mUserView.setText(getString(R.string.firebase_user_name, get_username.username));
                 mBandView.setText(getString(R.string.firebase_band_name, get_register.bandname));
                 mCityView.setText(getString(R.string.firebase_city_name, get_register.city));
+                Log.i("RotateImage", "Exif orientation: " + get_register.photo_orientation);
+
+                if(user.getPhotoUrl() != null) {
+                    Picasso.with(HomeActivity.this).load(user.getPhotoUrl() + "/picture?width=1500").into(ivBasicImage);
+                } else {
+
+                    storageReferencePhoto.child("images/" + user.getUid() + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.with(context).load(uri).rotate(get_register.photo_orientation).into(ivBasicImage);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+
+                            Log.i("Failed", "No Image!!");
+
+                        }
+                    });
+                }
+
 
             }
 

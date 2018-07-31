@@ -125,4 +125,5 @@
     <string name="login_text">Log In To Band App</string>
     <string name="city">City</string>
     <string name="firebase_city_name">City: %s</string>
+    <string name="rotate_text">rotate value!</string>
 </resources>

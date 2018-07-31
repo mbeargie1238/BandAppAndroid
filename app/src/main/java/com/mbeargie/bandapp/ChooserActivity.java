@@ -408,7 +408,7 @@ public class ChooserActivity extends BaseActivity implements AdapterView.OnItemC
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
         }
     }
 
